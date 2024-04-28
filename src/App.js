@@ -128,7 +128,7 @@ function App() {
         className="footer"
         onClick={() =>
           window.open(
-            "https://github.com/amit-yadav207/realtime-chat-app",
+            "https://github.com/amit-yadav207/context-based-chat-app",
             "_blank"
           )
         }
