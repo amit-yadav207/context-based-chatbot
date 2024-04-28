@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useRef,useEffect} from "react";
 import "./App.css"; // Import CSS file for styles
 import { FaPaperPlane } from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -8,6 +8,7 @@ function App() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]); // State to store all chat messages
   const [isLoading, setIsLoading] = useState(false); // State to track loading state
+  const chatAreaRef = useRef(null); // Ref for the chat area
 
   const query = async (data) => {
     setIsLoading(true); // Set loading state to true
@@ -39,7 +40,7 @@ function App() {
 
     const payload = {
       inputs: {
-        question: `from provided context , answer this question: ${question} ?`,
+        question: `from provided context, answer this question and also write some explanation in brief: ${question} ?`,
         context: context,
       },
     };
@@ -54,15 +55,25 @@ function App() {
       });
 
       const newMessages = [
-        { type: "bot", text: "🤖 " + data.answer, time: currentTime },
-        { type: "user", text: question + " 👤 ", time: currentTime },
         ...messages,
+
+        { type: "user", text: question + " 👤 ", time: currentTime },
+        { type: "bot", text: "🤖 " + data.answer, time: currentTime },
+
       ];
       setMessages(newMessages);
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
+
+  useEffect(() => {
+    // Scroll to the bottom of the chat area when messages change
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <div className="out-container">
@@ -80,18 +91,21 @@ function App() {
         </div>
         <div className="right-section">
           <h1 className="title">Conversation With Chatbot</h1>
-          <div className="chat-area">
+          <div className="chat-area" ref={chatAreaRef}>
             {messages.map((message, index) => (
+
               <div
                 key={index}
                 className={`chat-message ${message.type === "user" ? "user-message" : "bot-message"
                   }`}
               >
-                {message.text !== "undefined"
-                  ? message.text
-                  : "Please ask questions within the context! "}
+
+                {message.text}
+
+
                 {/* <span  className="timeStamp">{message.time}</span>*/}
               </div>
+
             ))}
             {messages.length === 0 && (
               <h2 className="empty">
@@ -114,13 +128,19 @@ function App() {
               }}
             />
 
-            <button className="submit-button" onClick={handleSubmit}>
+            <button className={`submit-button ${isLoading ? "loading" : ""}`} onClick={handleSubmit}>
               {isLoading ? (
-                <AiOutlineLoading3Quarters className="spin" />
+                <div className="loading-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
               ) : (
                 <FaPaperPlane /> // Send icon
               )}
             </button>
+
+
           </div>
         </div>
       </div>

@@ -113,10 +113,7 @@
   
 }
 
-.inputleft {
-  
-  
-}
+
 .heading {
   text-align: center;
   color: #333;
@@ -158,4 +155,59 @@
     color: #747474;
     font-size: 16px;
     
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+
+
+
+.loading-dots {
+  display: inline-block;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #333;
+  border-radius: 50%;
+  margin: 0 2px;
+}
+
+.loading-dots span:nth-child(1) {
+  animation: loading-animation 1s infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation: loading-animation 1s infinite 0.33s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation: loading-animation 1s infinite 0.66s;
+}
+
+@keyframes loading-animation {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+
+.hrline{
+  margin-bottom: 20px;
+  color: #c4c3c3;
 }
