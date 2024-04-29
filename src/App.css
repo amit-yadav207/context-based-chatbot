@@ -38,7 +38,7 @@
   font-weight: bold;
   margin-bottom: 10px;
   color: #333;
-  
+
   margin-top: 30px;
   text-align: center;
 }
@@ -78,8 +78,6 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
-
 }
 
 .input {
@@ -92,34 +90,17 @@
   font-size: 14px;
 }
 
-.submit-button {
-
-  color: #111010;
-  font-size: 16px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 1px;
-  background-color: white;
-}
-
-
-
 #inputArea {
   outline: none;
   font-size: 16px;
   border: none;
-  
 }
-
 
 .heading {
   text-align: center;
   color: #333;
   margin-bottom: -10px;
   margin-top: 20px;
- 
 }
 
 .footer {
@@ -127,7 +108,6 @@
   text-align: center;
   font-size: 12px;
   cursor: pointer;
-  
 }
 
 .out-container {
@@ -136,38 +116,37 @@
   /* padding: 0; */
   padding-top: 3px;
   margin: 0;
-  
+
   height: 550px;
   min-height: 100vh;
   width: 100%;
   border-radius: 4px;
   box-shadow: 0 0 2px #000000;
   border: 2px solid black;
- 
 }
 .timeStamp {
   display: block;
   font-size: 10px;
 }
 
-.empty{
-    text-align: center;
-    color: #747474;
-    font-size: 16px;
-    
+.empty {
+  text-align: center;
+  color: #747474;
+  font-size: 16px;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spin {
   animation: spin 1s linear infinite;
 }
-
-
-
 
 .loading-dots {
   display: inline-block;
@@ -206,8 +185,154 @@
   }
 }
 
-
-.hrline{
+.hrline {
   margin-bottom: 20px;
   color: #c4c3c3;
+}
+
+.submit-button,
+.mic-button {
+  color: #111010;
+  font-size: 16px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover,
+.mic-button:hover {
+  background-color: #f0f0f0;
+}
+
+.submit-button:focus,
+.mic-button:focus {
+  outline: none;
+}
+
+.delete-button {
+  cursor: pointer;
+  margin-right: 10px; /* Adjust as needed */
+  font-size: 20px;
+  color: #ff0000; /* Red color */
+}
+
+.red-dot {
+  width: 10px; /* Adjust size as needed */
+  height: 10px; /* Adjust size as needed */
+  background-color: #ff0000; /* Red color */
+  border-radius: 50%; /* Makes it round */
+  display: inline-block;
+  margin-left: 10px; /* Adjust as needed */
+  animation: pulsate 1s infinite; /* Animation for pulsating effect */
+}
+
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.recording-info {
+  display: flex;
+  align-items: center;
+}
+
+.recording-controls {
+  display: flex;
+  align-items: center;
+}
+
+.delete-button {
+  cursor: pointer;
+  font-size: 15px; /* Adjusted size */
+  color: #ff0000; /* Red color */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.delete-button:hover {
+  cursor: pointer;
+
+  color: #ff0000; /* Red color */
+
+  background-color: #f0f0f0;
+}
+
+.recording-text,
+.timer-text {
+  font-size: 16px; /* Adjusted size */
+  margin: 0 5px; /* Adjusted margin */
+}
+
+.red-dot {
+  width: 8px; /* Adjusted size */
+  height: 8px; /* Adjusted size */
+  background-color: #ff0000; /* Red color */
+  border-radius: 50%; /* Makes it round */
+  margin-left: 5px; /* Adjusted margin */
+  animation: pulsate 1s ease infinite; /* Animation for gentle pulsating effect */
+}
+
+@keyframes pulsate {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.recSend {
+  color: white;
+  font-size: 16px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 1px;
+  background-color: green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.recSend:hover {
+  background-color: green;
+}
+
+.recording-text {
+  font-size: 24px;
+  color: #333;
+  display: inline-block;
+  animation: recording 1s infinite linear;
+}
+
+@keyframes recording {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }

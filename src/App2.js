@@ -1,27 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
+import { AudioRecorder } from "react-audio-voice-recorder";
 import "./App.css"; // Import CSS file for styles
-import { FaPaperPlane, FaMicrophone, FaTrash, FaStop, FaTrashAlt } from "react-icons/fa";
-import Recorder from "./Recorder";
-function App() {
+import { FaPaperPlane, FaMicrophone, FaTrash } from "react-icons/fa";
+
+function App2() {
   const [context, setContext] = useState("");
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]); // State to store all chat messages
   const [isLoading, setIsLoading] = useState(false); // State to track loading state
   const [isRecording, setIsRecording] = useState(false); // State to track recording state
   const [timer, setTimer] = useState(0); // State to store recording timer
+  const [audioBlob, setAudioBlob] = useState(null); // State to store recorded audio blob
   const chatAreaRef = useRef(null); // Ref for the chat area
   const timerRef = useRef(null); // Ref for the timer interval
+  const audioRecorderRef = useRef(null); // Ref for the AudioRecorder component
 
 
 
-
-
+  // Your existing query function
+  // Your existing handleSubmit function
   const query = async (data) => {
     setIsLoading(true); // Set loading state to true
     try {
       const response = await fetch(
         "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2",
-        // "https://api-inference.huggingface.co/models/timpal0l/mdeberta-v3-base-squad2",
         {
           headers: {
             Authorization: "Bearer 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",
@@ -44,12 +46,6 @@ function App() {
       console.log("Exiting...");
       return;
     }
-
-    // Stop recording
-    setIsRecording(false);
-    // Clear timer
-    clearInterval(timerRef.current);
-    setTimer(0);
 
     const payload = {
       inputs: {
@@ -79,50 +75,54 @@ function App() {
       console.error("Error:", error);
     }
   };
-
+  // Function to handle starting and stopping recording
   const handleMicClick = () => {
     if (!isRecording) {
-      // Start recording
       setIsRecording(true);
-
-      // Start timer
+      audioRecorderRef.current.startRecording();
       timerRef.current = setInterval(() => {
         setTimer((prevTimer) => prevTimer + 1);
       }, 1000);
-      // Show recording indicator
-      // You can implement this part based on your UI structure
-      // For example, set a state to show a red dot indicating recording
     } else {
-      // Stop recording
       setIsRecording(false);
-      // Clear timer
+      audioRecorderRef.current.stopRecording();
       clearInterval(timerRef.current);
       setTimer(0);
-      // Implement logic to send the recorded message
-      // You can call a function to handle sending the recorded message here
     }
   };
 
-
-
-
-
-
+  // Function to handle deleting the recording
   const handleDeleteRecording = () => {
-    // Stop recording
+    setAudioBlob(null);
     setIsRecording(false);
-    // Clear timer
     clearInterval(timerRef.current);
     setTimer(0);
-    // Additional logic to delete the recording
-    // This can include clearing any recorded audio data or resetting any state related to recording
   };
 
+  // Function to handle downloading the recorded audio
+  const handleDownloadRecording = () => {
+    if (audioBlob) {
+      console.log("got")
+      const url = URL.createObjectURL(audioBlob);
+      const downloadUrlDiv = document.getElementById("download-url");
+      if (downloadUrlDiv) {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.textContent = "Download recorded audio"; // Text content of the link
+        downloadLink.download = "recorded_audio.webm";
+        downloadUrlDiv.appendChild(downloadLink);
+        console.log("gotw")
+      }
+    }
+  };
+  
+  
 
-
-
-
-
+  // Function to handle recording complete event
+  const handleRecordingComplete = (blob) => {
+    setAudioBlob(blob);
+    handleDownloadRecording();
+  };
 
   useEffect(() => {
     // Scroll to the bottom of the chat area when messages change
@@ -133,9 +133,11 @@ function App() {
 
   return (
     <div className="out-container">
-      <h2 className="heading">Context-Based ChatBot: Your Virtual Assistant</h2>
-      <div className="container">
 
+      <h2 className="heading">Context-Based ChatBot: Your Virtual Assistant</h2>
+      <div id="download-url">download</div>
+
+      <div className="container">
         <div className="left-section">
           <h1 className="title">Context</h1>
           <textarea
@@ -143,7 +145,6 @@ function App() {
             placeholder="Enter the context"
             value={context}
             onChange={(e) => setContext(e.target.value)}
-            id="textArea2"
             autoFocus
           />
         </div>
@@ -151,23 +152,17 @@ function App() {
           <h1 className="title">Conversation With Chatbot</h1>
           <div className="chat-area" ref={chatAreaRef}>
             {messages.map((message, index) => (
-
               <div
                 key={index}
                 className={`chat-message ${message.type === "user" ? "user-message" : "bot-message"
                   }`}
               >
-
                 {message.text}
-
-
-                {/* <span  className="timeStamp">{message.time}</span>*/}
               </div>
-
             ))}
             {messages.length === 0 && (
               <h2 className="empty">
-                write your question below to start Conversation
+                Write your question below to start the conversation
               </h2>
             )}
           </div>
@@ -178,53 +173,48 @@ function App() {
               placeholder="Enter your question..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              id="inputArea"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSubmit();
                 }
               }}
             />
-
-            {/* Mic button */}
-            {!isLoading && !isRecording && !question && (
-              <button className="mic-button" onClick={handleMicClick}>
-                <FaMicrophone />
+            {!isRecording && !question && (
+              <button className="mic-button" >
+               
+                <AudioRecorder
+                  ref={audioRecorderRef}
+                  onRecordingComplete={handleRecordingComplete}
+                />
               </button>
             )}
-
-            {/* Recording message and timer */}
             {isRecording && (
               <div className="recording-info">
                 <div className="recording-controls">
-                  {/* Dustbin symbol to delete recording */}
                   <span className="delete-button" onClick={handleDeleteRecording}>
                     <FaTrash />
                   </span>
-
-                  {/* Display red dot */}
                   <div className="red-dot"></div>
                   <p className="timer-text">{formatTimer(timer)}</p>
-                  <p className="recording-text"></p>
-
+                  <button className="download-button" onClick={handleDownloadRecording}>
+                    Download
+                  </button>
                 </div>
-
               </div>
             )}
-
-
-            {/* Send button */}
-            {(question || isRecording || isLoading) && <button className={`submit-button ${isLoading ? "loading" : ""} ${isRecording ? "recSend" : ""}`} onClick={handleSubmit}>
-              {isLoading ? (
-                <div className="loading-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              ) : (
-                <FaPaperPlane /> // Send icon
-              )}
-            </button>}
+            {(question || isRecording) && (
+              <button className={`submit-button ${isLoading ? "loading" : ""}`} onClick={handleSubmit}>
+                {isLoading ? (
+                  <div className="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                ) : (
+                  <FaPaperPlane />
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -239,15 +229,16 @@ function App() {
       >
         Made with ❤️ by Amit Yadav
       </p>
+      
     </div>
   );
 }
 
+// Your existing formatTimer function
 // Format timer to display in mm:ss format
 const formatTimer = (timer) => {
   const minutes = Math.floor(timer / 60);
   const seconds = timer % 60;
   return `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
 };
-
-export default App;
+export default App2;
