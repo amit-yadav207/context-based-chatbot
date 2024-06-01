@@ -260,7 +260,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "./App.css"; // Import CSS file for styles
 import { FaPaperPlane, FaMicrophone, FaTrash, FaStop, FaTrashAlt } from "react-icons/fa";
 import axios from 'axios';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+
 function App() {
   const [context, setContext] = useState("");
   const [question, setQuestion] = useState("");
@@ -276,51 +276,29 @@ function App() {
   const chunks = useRef([]); // Ref for audio chunks
   const [transcription, setTranscription] = useState("");
 
-  const genAI = new GoogleGenerativeAI("AIzaSyCEa5UhhkZrMpF2PwoVVUKbdxPDYJVz0sE");
-
-  // Initialize chat with history
-  let chat;
-  async function initializeChat() {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
-    chat = model.startChat({
-      history: [],
-
-      generationConfig: { maxOutputTokens: 100 },
-    });
-  }
-
-  initializeChat();
 
 
-
-
-
-
-
-
-  const query = async (data) => {
-
-
-    setIsLoading(true); // Set loading state to true
-
+  const queryBackend = async (message) => {
     try {
-      const result = await chat.sendMessage(data);
-      const response = await result.response;
-      const text = await response.text();
+      const response = await fetch('http://localhost:8000/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
 
-      return text;
-      //store user and bot response in chathistoryschema and update that user
-      // storeChatAndUserResponse(userId, message, text);
+      if (!response.ok) {
+        throw new Error('Failed to query backend');
+      }
+
+      const data = await response.json();
+      return data.response;
     } catch (error) {
-      console.error('Error sending message:', error);
-      // res.status(500).json({ error: 'Failed to send message' });
-    }
-    finally {
-      setIsLoading(false); // Reset loading state
+      console.error('Error querying backend:', error);
+      return null;
     }
   };
-
-
   const handleSubmit = async () => {
     if (question.toLowerCase() === "exit") {
       console.log("Exiting...");
@@ -343,7 +321,7 @@ function App() {
         context: context,
       },
     };
-    
+
     try {
       let data;
       // Check if audio data is available
@@ -362,7 +340,7 @@ function App() {
       // Call the query function to get the response
       // data = await query(payload);
       const ques = `from the given context ${context},please answer to the user query in short and if context is empty then reply "Please provide a context", here is the question ${question}`;
-      data = await query(ques);
+      data = await queryBackend(ques);
       const currentTime = new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -379,9 +357,9 @@ function App() {
     } catch (error) {
       console.error("Error:", error);
     }
-    finally{
-    setQuestion("");
-    }   
+    finally {
+      setQuestion("");
+    }
   };
 
   const transcribeAudio = async () => {
