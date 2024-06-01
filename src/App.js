@@ -279,6 +279,7 @@ function App() {
 
 
   const queryBackend = async (message) => {
+    setIsLoading(true)
     try {
       const response = await fetch('http://localhost:8000/query', {
         method: 'POST',
@@ -359,6 +360,7 @@ function App() {
     }
     finally {
       setQuestion("");
+      setIsLoading(false)
     }
   };
 
