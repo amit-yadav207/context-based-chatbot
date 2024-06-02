@@ -278,10 +278,13 @@ function App() {
 
 
 
+
+  // const BASE_URL_BACKEND = 'http://localhost:8000/query'
+  const BASE_URL_BACKEND = "https://context-based-chatapp-backend.vercel.app/query"
   const queryBackend = async (message) => {
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:8000/query', {
+      const response = await fetch(BASE_URL_BACKEND, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -298,8 +301,14 @@ function App() {
     } catch (error) {
       console.error('Error querying backend:', error);
       return null;
+    } finally {
+      setIsLoading(false)
     }
   };
+
+
+
+
   const handleSubmit = async () => {
     if (question.toLowerCase() === "exit") {
       console.log("Exiting...");
