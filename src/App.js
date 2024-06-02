@@ -280,7 +280,7 @@ function App() {
 
 
   // const BASE_URL_BACKEND = 'http://localhost:8000/query'
-  const BASE_URL_BACKEND = "https://context-based-chatapp-backend.vercel.app/query"
+  const BASE_URL_BACKEND = "https://context-based-chatapp-backend.onrender.com/query"
   const queryBackend = async (message) => {
     setIsLoading(true)
     try {
